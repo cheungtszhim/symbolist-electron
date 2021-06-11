@@ -1,0 +1,71 @@
+.Global-musicFont {
+    font-family: Bravura;
+    font-size: 24px;
+    fill: black;
+}
+
+.Global-textFont {
+    font-family: Avenir;
+    fill: black;
+}
+
+.Score-rect {
+    fill: white;
+}
+
+.Score-title {
+    font-size: 18px;
+    dominant-baseline: hanging;
+}
+
+.Part-name {
+    font-size: 16px;
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+.Part-corner {
+    stroke: rgb(206, 206, 206);
+    fill: none;
+    stroke-opacity: 0;
+}
+
+
+.Measure-barLine {
+    stroke: black;
+    fill: none;
+}
+.Measure-number {
+    font-size: 15px;
+}
+.Measure-ref {
+    stroke: pink;
+    stroke-opacity: 0;
+    fill: none;
+}
+
+.StaffClef-staff_line {
+    stroke: black;
+}
+.StaffClef-clef {
+}
+.StaffClef-key_signature {
+}
+.StaffClef-ref {
+    stroke: pink;
+    stroke-opacity: 0;
+    fill: none;
+}
+
+.Note-note_head {
+}
+.Note-accidental {
+}
+.Note-stem {
+}
+.Note-ledger_line {
+    stroke: black;
+}
+.Note-flag {
+}
+.Note-dot {
+}

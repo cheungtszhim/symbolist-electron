@@ -1,9 +1,9 @@
 
-class NodescoreAPI_UI 
+class NodeScoreAPI_UI 
 {
     constructor()
     {
-        this.class = "NodescoreAPI";
+        this.class = "NodeScoreAPI";
     }
 
     changeNoteColor(params)
@@ -26,11 +26,11 @@ class NodescoreAPI_UI
     
 }
 
-class NodescoreAPI_IO
+class NodeScoreAPI_IO
 {
     constructor()
     {
-        this.class = "NodescoreAPI";
+        this.class = "NodeScoreAPI";
     }
 
     transpositionTransform(params)
@@ -74,7 +74,7 @@ class NodescoreAPI_IO
 
 
 module.exports = {
-    ui_def: NodescoreAPI_UI,
-    io_def: NodescoreAPI_IO
+    ui_def: NodeScoreAPI_UI,
+    io_def: NodeScoreAPI_IO
 }
 

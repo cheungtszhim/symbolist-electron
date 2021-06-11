@@ -4,46 +4,30 @@
 if( typeof window.uiDefs == 'undefined')
     window.uiDefs = new Map();
 
-window.initDef = require('./init.json');
+window.initDef = require('./NodeScore_init.json');
 
 // load defs
-const AzimNote = require('./lib/AzimNote');
-const BasicSymbol = require('./lib/BasicSymbol');
-const BetaEnv = require('./lib/BetaEnv');
-const CartesianPlot = require('./lib/CartesianPlot');
-const ColorPitch = require('./lib/ColorPitch');
-const FiveLineStave = require('./lib/FiveLineStave');
-const FiveLineStaveEvent = require('./lib/FiveLineStaveEvent');
-const Measure = require('./lib/Measure');
-const PartStave = require('./lib/PartStave');
-const RootSymbol = require('./lib/RootSymbol');
-const SnapPoint = require('./lib/SnapPoint');
-const SubdivisionTool = require('./lib/SubdivisionTool');
-const DataPoint = require('./lib/DataPoint');
-const SystemContainer = require('./lib/SystemContainer');
 
-const NodescoreAPI = require('./lib/NodescoreAPI');
+const Score = require('./lib/NodeScore/Score');
+uiDefs.set('Score', new Score.ui_def() );
 
-// set into def map
-uiDefs.set("AzimNote", new AzimNote.ui_def() );
-uiDefs.set("BasicSymbol", new BasicSymbol.ui_def() );
-uiDefs.set("BetaEnv", new BetaEnv.ui_def() );
-uiDefs.set("CartesianPlot", new CartesianPlot.ui_def() );
-uiDefs.set("ColorPitch", new ColorPitch.ui_def() );
-uiDefs.set("FiveLineStave", new FiveLineStave.ui_def() );
-uiDefs.set("FiveLineStaveEvent", new FiveLineStaveEvent.ui_def() );
-uiDefs.set("Measure", new Measure.ui_def() );
-uiDefs.set("PartStave", new PartStave.ui_def() );
-uiDefs.set("RootSymbol", new RootSymbol.ui_def() );
-uiDefs.set("SnapPoint", new SnapPoint.ui_def() );
-uiDefs.set("SubdivisionTool", new SubdivisionTool.ui_def() );
-uiDefs.set("DataPoint", new DataPoint.ui_def() );
-uiDefs.set("SystemContainer", new SystemContainer.ui_def() );
+const Part = require('./lib/NodeScore/Part');
+uiDefs.set('Part', new Part.ui_def() );
 
-uiDefs.set("NodescoreAPI", new NodescoreAPI.ui_def() );
+const Measure = require('./lib/NodeScore/Measure');
+uiDefs.set('Measure', new Measure.ui_def() );
+
+const StaffClef = require('./lib/NodeScore/StaffClef');
+uiDefs.set('StaffClef', new StaffClef.ui_def() );
+
+const Note = require('./lib/NodeScore/Note');
+uiDefs.set('Note', new Note.ui_def() );
+
+const NodeScoreAPI = require('./lib/NodeScore/NodeScoreAPI');
+uiDefs.set('NodeScoreAPI', new NodeScoreAPI.ui_def() );
 
 
-let cssFile = "./defs/css/stylie.css";
+let cssFile = "./defs/css/NodeScore.css";
 let head = document.getElementsByTagName("head");
 if( !document.querySelector(`link[href="${cssFile}"]`) )
 {
@@ -53,41 +37,3 @@ if( !document.querySelector(`link[href="${cssFile}"]`) )
     cssFileRef.href = cssFile;
     head[0].appendChild(cssFileRef);
 }
-
-
-
-/*
-BasicSymbol.js          
-BasicSymbolGL.js        
-BetaEnv.js              
-CartesianPlot.js        
-ColorPitch.js           
-DataPoint.js            
-FiveLineStave.js        
-LibDefs.js              
-Measure.js              
-PartStave.js            
-PathSymbol.js           
-RootSymbol.js           
-SnapPoint.js            
-SubdivisionTool.js      
-SymbolTemplate.js       
-RootSymbol.js           
-SnapPoint.js            
-SubdivisionTool.js      
-SymbolTemplate.js       
-RootSymbol.js           
-SnapPoint.js            
-SubdivisionTool.js      
-SymbolTemplate.js       
-TextSymbol.js           
-assets                  
-fiveLineStaveEvent.js   
-grains.json             
-init.json
-plot.json
-systemContainer.js
-sytlie.css
-*/
-
-
