@@ -241,7 +241,7 @@ class Measure extends Template.SymbolBase
     childDataToViewParams(this_element, child_data) {
         const x = this.getElementViewParams(this_element).x;
         const y = this.getElementViewParams(this_element).y;
-        //window.max.outlet("post", 'x, y', x, y);
+        window.max.outlet("post", child_data.id, 'x, y', x, y);
         const staff_line_width = this.getElementViewParams(this_element).width;
 
         let clef_visible = child_data.clef_visible;

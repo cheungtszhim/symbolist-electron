@@ -253,7 +253,6 @@ class StaffClef extends Template.SymbolBase
             else {
                 x = this.getElementViewParams(this_element).x;
             }
-            
             const keyMap = require(`./key_maps/${this_element.dataset.key_map}`);
             const fromKeyMap = keyMap.noteDataToViewParams(this_element, child_data, this.fontSize / 4);
             return {

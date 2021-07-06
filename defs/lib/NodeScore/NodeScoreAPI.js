@@ -166,29 +166,33 @@ class NodeScoreAPI_IO
         if (typeof params.attribute != 'undefined') att = isArray(params.attribute)? params.attribute : [params.attribute];
         if (typeof params.args != "undefined") {
             const args = Array.isArray(params.args) ? params.args : [params.args];
-            if (args.length >= 2) {
+            if (args.length >= 1) {
                 id = args[0];
-                if (id == '.' && this.selected.length > 0) id = this.selected[0]; 
+                if (id == '.' && this.selected.length > 0) id = this.selected[0];
+            }
+            if (args.length >= 2) {
                 att = args.slice(1);
             }
-            else {
-                console.log('get: not enough arguments');
-            }
         }
-        if (typeof id != 'undefined' && typeof att != 'undefined') {
+        if (typeof id != 'undefined') {
             const model = io_api.getModel();
             if (model.has(id)) {
                 const el = model.get(id);
                 let output = {};
                 output[msg] = {id}
-                att.forEach(a => {
-                    if (a in el) {
-                        output[msg][a] = el[a];
-                    }
-                    else {
-                        console.log(`get: attribute ${a} not found in element ${id}`);
-                    }
-                });
+                if (typeof att == 'undefined') {
+                    output[msg] = el;
+                }
+                else {
+                    att.forEach(a => {
+                        if (a in el) {
+                            output[msg][a] = el[a];
+                        }
+                        else {
+                            console.log(`get: attribute ${a} not found in element ${id}`);
+                        }
+                    });
+                }
                 io_api.outlet(output);
             }
             else {
@@ -196,7 +200,7 @@ class NodeScoreAPI_IO
             }
         }
         else {
-            console.log('get: id or attribute undefined');
+            console.log('get: id undefined');
         }
     }
 

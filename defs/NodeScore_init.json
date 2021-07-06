@@ -16,11 +16,11 @@
         "part_name" : "Example Part",
         "contents" : [{
             "class" : "Measure",
-            "id" : "Measure_0",
+            "id" : "Measure_0_0",
             "index" : 0,
             "contents" : [{
                 "class" : "StaffClef",
-                "id" : "StaffClef_0",
+                "id" : "StaffClef_0_0",
                 "clef" : "G",
                 "clef_anchor" : -1,
                 "key_signature" : "Abm",
@@ -29,12 +29,12 @@
         },
         {
             "class" : "Measure",
-            "id" : "Measure_1",
+            "id" : "Measure_0_1",
             "index" : 1,
             "time_signature" : [3,2],
             "contents" : [{
                 "class" : "StaffClef",
-                "id" : "StaffClef_1",
+                "id" : "StaffClef_0_1",
                 "clef" : "C",
                 "clef_anchor" : 0,
                 "key_signature" : "Cb",

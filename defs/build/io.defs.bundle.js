@@ -44,7 +44,7 @@ module.exports = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"class":"Score","id":"Score","x":100,"y":40,"width":1000,"height":500,"indent":100,"title":"Example Score","subtitle":"","composer":"","copyright":"","contents":[{"class":"Part","id":"Part_0","part_name":"Example Part","contents":[{"class":"Measure","id":"Measure_0","index":0,"contents":[{"class":"StaffClef","id":"StaffClef_0","clef":"G","clef_anchor":-1,"key_signature":"Abm","contents":[]}]},{"class":"Measure","id":"Measure_1","index":1,"time_signature":[3,2],"contents":[{"class":"StaffClef","id":"StaffClef_1","clef":"C","clef_anchor":0,"key_signature":"Cb","contents":[]}]}]},{"class":"Part","id":"Part_1","part_name":"Example Part","contents":[{"class":"Measure","id":"Measure_1_0","index":0,"time_signature":[6,8],"contents":[{"class":"StaffClef","id":"StaffClef_1_0","clef":"F","clef_anchor":1,"key_signature":"C#","contents":[]}]},{"class":"Measure","id":"Measure_1_1","index":1,"time_signature":[6,8],"contents":[{"class":"StaffClef","id":"StaffClef_1_1","clef":"C","clef_anchor":1,"key_signature":"A#m","contents":[]}]}]}]}');
+module.exports = JSON.parse('{"class":"Score","id":"Score","x":100,"y":40,"width":1000,"height":500,"indent":100,"title":"Example Score","subtitle":"","composer":"","copyright":"","contents":[{"class":"Part","id":"Part_0","part_name":"Example Part","contents":[{"class":"Measure","id":"Measure_0_0","index":0,"contents":[{"class":"StaffClef","id":"StaffClef_0_0","clef":"G","clef_anchor":-1,"key_signature":"Abm","contents":[]}]},{"class":"Measure","id":"Measure_0_1","index":1,"time_signature":[3,2],"contents":[{"class":"StaffClef","id":"StaffClef_0_1","clef":"C","clef_anchor":0,"key_signature":"Cb","contents":[]}]}]},{"class":"Part","id":"Part_1","part_name":"Example Part","contents":[{"class":"Measure","id":"Measure_1_0","index":0,"time_signature":[6,8],"contents":[{"class":"StaffClef","id":"StaffClef_1_0","clef":"F","clef_anchor":1,"key_signature":"C#","contents":[]}]},{"class":"Measure","id":"Measure_1_1","index":1,"time_signature":[6,8],"contents":[{"class":"StaffClef","id":"StaffClef_1_1","clef":"C","clef_anchor":1,"key_signature":"A#m","contents":[]}]}]}]}');
 
 /***/ }),
 
@@ -294,7 +294,7 @@ class Measure extends Template.SymbolBase
     childDataToViewParams(this_element, child_data) {
         const x = this.getElementViewParams(this_element).x;
         const y = this.getElementViewParams(this_element).y;
-        //window.max.outlet("post", 'x, y', x, y);
+        window.max.outlet("post", child_data.id, 'x, y', x, y);
         const staff_line_width = this.getElementViewParams(this_element).width;
 
         let clef_visible = child_data.clef_visible;
@@ -461,11 +461,11 @@ class NodeScoreAPI_IO
         }
         if (state && !this.selected.includes(id)) this.selected.push(id);
         else if (!state && this.selected.includes(id)) this.selected.splice(this.selected.indexOf(id), 1);
-        io_api.outlet({ getSelected: this.selected});
+        io_api.outlet({selected: this.selected});
     }
 
     getSelected() {
-        io_api.outlet({ getSelected: this.selected});
+        io_api.outlet({selected: this.selected});
     }
 
     select(params) {
@@ -555,29 +555,33 @@ class NodeScoreAPI_IO
         if (typeof params.attribute != 'undefined') att = isArray(params.attribute)? params.attribute : [params.attribute];
         if (typeof params.args != "undefined") {
             const args = Array.isArray(params.args) ? params.args : [params.args];
-            if (args.length >= 2) {
+            if (args.length >= 1) {
                 id = args[0];
-                if (id == '.' && this.selected.length > 0) id = this.selected[0]; 
+                if (id == '.' && this.selected.length > 0) id = this.selected[0];
+            }
+            if (args.length >= 2) {
                 att = args.slice(1);
             }
-            else {
-                console.log('get: not enough arguments');
-            }
         }
-        if (typeof id != 'undefined' && typeof att != 'undefined') {
+        if (typeof id != 'undefined') {
             const model = io_api.getModel();
             if (model.has(id)) {
                 const el = model.get(id);
                 let output = {};
                 output[msg] = {id}
-                att.forEach(a => {
-                    if (a in el) {
-                        output[msg][a] = el[a];
-                    }
-                    else {
-                        console.log(`get: attribute ${a} not found in element ${id}`);
-                    }
-                });
+                if (typeof att == 'undefined') {
+                    output[msg] = el;
+                }
+                else {
+                    att.forEach(a => {
+                        if (a in el) {
+                            output[msg][a] = el[a];
+                        }
+                        else {
+                            console.log(`get: attribute ${a} not found in element ${id}`);
+                        }
+                    });
+                }
                 io_api.outlet(output);
             }
             else {
@@ -585,7 +589,7 @@ class NodeScoreAPI_IO
             }
         }
         else {
-            console.log('get: id or attribute undefined');
+            console.log('get: id undefined');
         }
     }
 
@@ -2165,7 +2169,6 @@ class StaffClef extends Template.SymbolBase
             else {
                 x = this.getElementViewParams(this_element).x;
             }
-            
             const keyMap = __webpack_require__(629)(`./${this_element.dataset.key_map}`);
             const fromKeyMap = keyMap.noteDataToViewParams(this_element, child_data, this.fontSize / 4);
             return {
