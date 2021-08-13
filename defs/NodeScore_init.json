@@ -23,7 +23,7 @@
                 "id" : "StaffClef_0_0",
                 "clef" : "G",
                 "clef_anchor" : -1,
-                "key_signature" : "Abm",
+                "key_signature" : "A",
                 "contents" : []
             }]
         },
@@ -54,10 +54,28 @@
             "contents" : [{
                 "class" : "StaffClef",
                 "id" : "StaffClef_1_0",
-                "clef" : "F",
-                "clef_anchor" : 1,
+                "clef" : "G",
+                "clef_anchor" : -1,
                 "key_signature" : "C#",
-                "contents" : []
+                "contents" : [{
+                    "class" : "RhythmGroup",
+                    "id" : "RhythmGroupTest",
+                    "contents" : [{
+                        "class" : "Note",
+                        "id" : "Note_beamtest_1",
+                        "contents" : []
+                    }, {
+                        "class" : "Note",
+                        "id" : "Note_beamtest_2",
+                        "pitch" : "F4",
+                        "contents" : []
+                    }, {
+                        "class" : "Note",
+                        "id" : "Note_beamtest_3",
+                        "pitch" : "Bb4",
+                        "contents" : []
+                    }]
+                }]
             }]
         },
         {
@@ -71,7 +89,12 @@
                 "clef" : "C",
                 "clef_anchor" : 1,
                 "key_signature" : "A#m",
-                "contents" : []
+                "contents" : [{
+                    "class" : "Note",
+                    "id" : "Note_test",
+                    "pitch" : 58,
+                    "contents" : []
+                }]
             }]
         }]
     }]

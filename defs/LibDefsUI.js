@@ -20,8 +20,14 @@ uiDefs.set('Measure', new Measure.ui_def() );
 const StaffClef = require('./lib/NodeScore/StaffClef');
 uiDefs.set('StaffClef', new StaffClef.ui_def() );
 
+const RhythmGroup = require('./lib/NodeScore/RhythmGroup');
+uiDefs.set('RhythmGroup', new RhythmGroup.ui_def() );
+
 const Note = require('./lib/NodeScore/Note');
 uiDefs.set('Note', new Note.ui_def() );
+
+const Graphic = require('./lib/NodeScore/Graphic');
+uiDefs.set('Graphic', new Graphic.ui_def() );
 
 const NodeScoreAPI = require('./lib/NodeScore/NodeScoreAPI');
 uiDefs.set('NodeScoreAPI', new NodeScoreAPI.ui_def() );

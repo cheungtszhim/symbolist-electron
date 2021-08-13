@@ -7,7 +7,7 @@ class StaffClef extends Template.SymbolBase
     constructor() {
         super();
         this.class = 'StaffClef';
-        this.palette = ['Note'];
+        this.palette = ['Note', 'RhythmGroup'];
         this.fontSize = 24;
     }
 
@@ -226,11 +226,11 @@ class StaffClef extends Template.SymbolBase
     }
 
     childDataToViewParams(this_element, child_data) {
+        let x, y;
         if (child_data.class == 'Note') {
             const clefKeyGroup = this_element.querySelector('.StaffClef-clef_key-group');
 
             // initialize x, start from the right of timeSig/clefKey if visible
-            let x;
             const container = ui_api.getContainerForElement(this_element);
             const timeSigGroup = container.querySelector('.Measure-timeSig-group');
             const children = this_element.querySelector('.contents').children;
@@ -255,9 +255,46 @@ class StaffClef extends Template.SymbolBase
             }
             const keyMap = require(`./key_maps/${this_element.dataset.key_map}`);
             const fromKeyMap = keyMap.noteDataToViewParams(this_element, child_data, this.fontSize / 4);
+            //const x_after_note = x + lib.getComputedTextLength(fromKeyMap.note_head_glyph, 'Note-note_head Global-musicFont');
             return {
                 ...fromKeyMap, // y, accidental_glyph, accidental_visible, stem_direction, ledger_line, note_head_glyph
-                x
+                x//,
+                //beam_flag: true,
+                //x_after_note
+            }
+        }
+        else if (child_data.class == 'RhythmGroup') {
+            const clefKeyGroup = this_element.querySelector('.StaffClef-clef_key-group');
+
+            // initialize x, start from the right of timeSig/clefKey if visible
+            const container = ui_api.getContainerForElement(this_element);
+            const timeSigGroup = container.querySelector('.Measure-timeSig-group');
+            const children = this_element.querySelector('.contents').children;
+            let group_exist;
+            if (children.length > 0 ) {
+                try { // check if this rhythm group already exists
+                    group_exist = document.getElementById(child_data.id);
+                    x = ui_api.getBBoxAdjusted(group_exist).left;
+                }
+                catch (e) {
+                    const lastChild = children[children.length-1];
+                    x = ui_api.getBBoxAdjusted(lastChild).right;
+                }
+            }
+            else if (timeSigGroup) {
+                x = ui_api.getBBoxAdjusted(timeSigGroup).right;
+            }
+            else if (clefKeyGroup.childNodes.length > 0) {
+                x = ui_api.getBBoxAdjusted(clefKeyGroup).right;
+            }
+            else {
+                x = this.getElementViewParams(this_element).x;
+            }
+            y = this.getElementViewParams(this_element).y;
+
+            return {
+                x,
+                y
             }
         }
     }
@@ -272,6 +309,87 @@ class StaffClef extends Template.SymbolBase
         return { pitch }
     }
 
+    updateAfterContents (element) {
+        const children = element.querySelector('.contents').children;
+        const l = children.length;
+        let drawArray = [];
+        let beamArray = [];
+        let leftXArray = [];
+        let rightXArray = [];
+        let yArray = [];
+        let isNote = [];
+        let stemGroup = {
+            new: 'g',
+            class: 'StaffClef-stem-group',
+            id: `${element.id}-stem-group`,
+            container: `${element.id}-display`,
+            child: []
+        };
+        const refY = parseFloat(element.querySelector('.StaffClef-ref').getAttribute('y'));
+
+        // iterate children
+        for (let i = 0; i < l; i++) {
+            if (children[i].classList[0] == 'Note') {
+                isNote[i] = true;
+                // beam number array
+                const flagGroup = children[i].querySelector('.Note-flag-group');
+                beamArray[i] = parseFloat(flagGroup.dataset.num_beams);
+                // notehead y left right
+                const noteHead = children[i].querySelector('.Note-note_head');
+                const noteHeadBBox = ui_api.getBBoxAdjusted(noteHead);
+                leftXArray[i] = noteHeadBBox.left;
+                rightXArray[i] = noteHeadBBox.right;
+                const noteHeadY = parseFloat(noteHead.getAttribute('y'));
+                yArray[i] = noteHeadY;
+                
+                // draw stems
+                const staffHeight = lib.fontSize;
+                const stemWidth = lib.fontSize / 16;
+                let stem_direction = children[i].dataset.stem_direction;
+                
+                if (stem_direction == 'auto') {
+                    if (yArray[i] >= refY) stem_direction = 'up';
+                    else stem_direction = 'down';
+                }
+
+                if (stem_direction == 'up') {
+                    stemGroup.child.push({
+                        new: 'rect',
+                        class: 'StaffClef-stem',
+                        id: `${element.id}-stem-${children[i].id}`,
+                        x: rightXArray[i] - stemWidth,
+                        y: yArray[i] - staffHeight,
+                        width: stemWidth,
+                        height: staffHeight
+                    });
+                }
+                else if (stem_direction == 'down') {
+                    stemGroup.child.push({
+                        new: 'rect',
+                        class: 'StaffClef-stem',
+                        id: `${element.id}-stem-${children[i].id}`,
+                        x: leftXArray[i],
+                        y: yArray[i],
+                        width: stemWidth,
+                        height: staffHeight
+                    });
+                }
+            }
+            else if (children[i].classList[0] == 'RhythmGroup') {
+                // do nothing if it's a RhythmGroup
+                isNote[i] = false;
+            }
+        }
+        
+        drawArray.push(stemGroup);
+
+        const drawObj = {
+            key: 'svg',
+            val: drawArray
+        }
+        ui_api.drawsocketInput(drawObj);
+
+    }
 }
 
 class StaffClef_IO extends Template.IO_SymbolBase

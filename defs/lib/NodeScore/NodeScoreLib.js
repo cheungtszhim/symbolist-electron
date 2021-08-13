@@ -3,12 +3,15 @@ function getComputedTextLength(text, cssClass)
     const topSvg = document.getElementById('top-svg');
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     textElement.textContent = text;
-    textElement.setAttribute('class', cssClass);
+    textElement.setAttribute('class', cssClass + ' test');
     topSvg.appendChild(textElement);
     const textLength = textElement.getComputedTextLength();
     topSvg.removeChild(textElement);
+    //console.log('textLength', textLength);
     return textLength;
 }
+
+const fontSize = 24;
 
 const smufl = {
     noteHead: {
@@ -183,5 +186,6 @@ const smufl = {
 
 module.exports = {
     getComputedTextLength,
-    smufl
+    smufl,
+    fontSize
 }

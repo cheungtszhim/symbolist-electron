@@ -650,14 +650,21 @@ function noteValueToGlyph(value) {
             }
         }
         // iterate notes before current
-        const children = staff_element.querySelector('.contents').children;
-        for (let i = 0; i < children.length; i++) {
-            if (children[i].id == note_data.id) break; // if note already exists
-            const noteHead = children[i].querySelector('.Note-note_head');
-            if (noteHead.getAttribute('y') == y) {
-                currentStaffLevelPitch = pitchStringDef(children[i].dataset.pitch, keySigArray).pitch;
+        function iterateAccidentals(el) {
+            const children = el.querySelector('.contents').children;
+            for (let i = 0; i < children.length; i++) {
+                if (children[i].id == note_data.id) return; // if note already exists
+                if (children[i].classList[0] == 'Note') {
+                    const noteHead = children[i].querySelector('.Note-note_head');
+                    if (noteHead.getAttribute('y') == y) {
+                        currentStaffLevelPitch = pitchStringDef(children[i].dataset.pitch, keySigArray).pitch;
+                    }
+                }
+                else if (children[i].classList[0] == 'RhythmGroup') iterateAccidentals(children[i]);
             }
         }
+        iterateAccidentals(staff_element);
+
         // finally, check if current accidental is same
         if (currentStaffLevelPitch == pitchObj.pitch) accidental_visible = false;
         else accidental_visible = true;
