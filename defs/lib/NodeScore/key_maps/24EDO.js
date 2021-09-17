@@ -578,6 +578,50 @@ function noteValueToGlyph(value) {
     }
 }
 
+function restValueToGlyph(value) {
+    const maxDots = 6;
+    let glyph = '';
+    let dots = 0;
+    let currentValue = 32;
+    if (value > 32 || value <= 0) {
+        console.log('Note value invalid:',value);
+    }
+    while (value < currentValue && currentValue >= 1/256) {
+        currentValue /= 2;
+        glyph = currentValue;
+    }
+    // add dots
+    let dotValue = currentValue;
+    while (value > currentValue && dots < maxDots) {
+        dotValue /= 2;
+        currentValue += dotValue;
+        dots++;
+    }
+
+    return {
+        glyph,
+        dots
+    }
+}
+
+/**
+ * Called by childDataToViewParams in StaffClef.js, returns note view params y, accidental
+ * 
+ * @param {Element} staff_element 
+ * @param {Object} rest_data 
+ */
+ function restDataToViewParams(staff_element, rest_data, staffLineSpacing) {
+
+    // rhythm
+    const value = rest_data.value;
+    const restDisplay = restValueToGlyph(value);
+    const glyph = lib.smufl.rest[restDisplay.glyph];
+    const dots = restDisplay.dots;
+    return {
+        glyph,
+        dots,
+    }
+}
 /**
  * Called by childDataToViewParams in StaffClef.js, returns note view params y, accidental
  * 
@@ -705,6 +749,7 @@ module.exports = {
     keySignatureDef,
     accidentalDef,
     noteDataToViewParams,
+    restDataToViewParams,
     staffLevelToPitch,
     keySignatureDisplay
 }

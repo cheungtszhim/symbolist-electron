@@ -201,23 +201,6 @@ class Note extends Template.SymbolBase
             'data-num_beams': params.beams,
             child: []
         };
-        /*
-        if (params.beam_flag) {
-            if (params.beams > 0 && params.beams <= 8) {
-                flagGroup.child.push({
-                    new: 'text',
-                    class: 'Note-flag Global-musicFont',
-                    id: `${params.id}-flag`,
-                    x: stemX - (params.stem_direction == 'down' ? 0 : stemWidth),
-                    y: stemEndY,
-                    child: lib.smufl.flag[params.beams][(params.stem_direction == 'down' ? 'down' : 'up')]
-                });
-            }
-            else {
-                console.error(`${params.id}: ${params.beams} beams not supported`);
-            }
-        }
-        */
         returnArray.push(flagGroup);
 
         // dots

@@ -26,6 +26,9 @@ uiDefs.set('RhythmGroup', new RhythmGroup.ui_def() );
 const Note = require('./lib/NodeScore/Note');
 uiDefs.set('Note', new Note.ui_def() );
 
+const Rest = require('./lib/NodeScore/Rest');
+uiDefs.set('Rest', new Rest.ui_def() );
+
 const Graphic = require('./lib/NodeScore/Graphic');
 uiDefs.set('Graphic', new Graphic.ui_def() );
 

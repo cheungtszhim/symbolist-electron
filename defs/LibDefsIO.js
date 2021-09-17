@@ -22,6 +22,9 @@ ioDefs.set('StaffClef', new StaffClef.io_def() );
 const Note = require('./lib/NodeScore/Note');
 ioDefs.set('Note', new Note.io_def() );
 
+const Rest = require('./lib/NodeScore/Rest');
+ioDefs.set('Rest', new Rest.io_def() );
+
 const NodeScoreAPI = require('./lib/NodeScore/NodeScoreAPI');
 ioDefs.set('NodeScoreAPI', new NodeScoreAPI.io_def() );
 

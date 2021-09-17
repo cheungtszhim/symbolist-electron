@@ -28,6 +28,9 @@ ioDefs.set('StaffClef', new StaffClef.io_def() );
 const Note = __webpack_require__(519);
 ioDefs.set('Note', new Note.io_def() );
 
+const Rest = __webpack_require__(742);
+ioDefs.set('Rest', new Rest.io_def() );
+
 const NodeScoreAPI = __webpack_require__(833);
 ioDefs.set('NodeScoreAPI', new NodeScoreAPI.io_def() );
 
@@ -44,7 +47,7 @@ module.exports = {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"class":"Score","id":"Score","x":100,"y":40,"width":1000,"height":500,"indent":100,"title":"Example Score","subtitle":"","composer":"","copyright":"","contents":[{"class":"Part","id":"Part_0","part_name":"Example Part","contents":[{"class":"Measure","id":"Measure_0_0","index":0,"contents":[{"class":"StaffClef","id":"StaffClef_0_0","clef":"G","clef_anchor":-1,"key_signature":"A","contents":[]}]},{"class":"Measure","id":"Measure_0_1","index":1,"time_signature":[3,2],"contents":[{"class":"StaffClef","id":"StaffClef_0_1","clef":"C","clef_anchor":0,"key_signature":"Cb","contents":[]}]}]},{"class":"Part","id":"Part_1","part_name":"Example Part","contents":[{"class":"Measure","id":"Measure_1_0","index":0,"time_signature":[6,8],"contents":[{"class":"StaffClef","id":"StaffClef_1_0","clef":"G","clef_anchor":-1,"key_signature":"C#","contents":[{"class":"RhythmGroup","id":"RhythmGroupTest","contents":[{"class":"Note","id":"Note_beamtest_1","contents":[]},{"class":"Note","id":"Note_beamtest_2","pitch":"F4","contents":[]},{"class":"Note","id":"Note_beamtest_3","pitch":"Bb4","contents":[]}]}]}]},{"class":"Measure","id":"Measure_1_1","index":1,"time_signature":[6,8],"contents":[{"class":"StaffClef","id":"StaffClef_1_1","clef":"C","clef_anchor":1,"key_signature":"A#m","contents":[{"class":"Note","id":"Note_test","pitch":58,"contents":[]}]}]}]}]}');
+module.exports = JSON.parse('{"class":"Score","id":"Score","x":100,"y":40,"width":1000,"height":500,"indent":100,"title":"Example Score","subtitle":"","composer":"","copyright":"","contents":[{"class":"Part","id":"Part_0","part_name":"Example Part","contents":[{"class":"Measure","id":"Measure_0_0","index":0,"contents":[{"class":"StaffClef","id":"StaffClef_0_0","clef":"G","clef_anchor":-1,"key_signature":"A","contents":[]}]},{"class":"Measure","id":"Measure_0_1","index":1,"time_signature":[3,2],"contents":[{"class":"StaffClef","id":"StaffClef_0_1","clef":"C","clef_anchor":0,"key_signature":"Cb","contents":[]}]}]},{"class":"Part","id":"Part_1","part_name":"Example Part","contents":[{"class":"Measure","id":"Measure_1_0","index":0,"time_signature":[6,8],"contents":[{"class":"StaffClef","id":"StaffClef_1_0","clef":"G","clef_anchor":-1,"key_signature":"C#","contents":[]}]},{"class":"Measure","id":"Measure_1_1","index":1,"time_signature":[6,8],"contents":[{"class":"StaffClef","id":"StaffClef_1_1","clef":"C","clef_anchor":1,"key_signature":"A#m","contents":[]}]}]}]}');
 
 /***/ }),
 
@@ -957,6 +960,22 @@ const smufl = {
             black: ''
         }
     },
+    rest: {
+        '32': '',
+        '16': '',
+        '8': '',
+        '4': '',
+        '2': '',
+        '1': '',
+        '0.5': '',
+        '0.25': '',
+        '0.125': '',
+        '0.0625': '',
+        '0.03125': '',
+        '0.015625': '',
+        '0.0078125': '',
+        '0.00390625': ''
+    },
     accidental: {
         '0': '',
         '0.5': '',
@@ -1252,23 +1271,6 @@ class Note extends Template.SymbolBase
             'data-num_beams': params.beams,
             child: []
         };
-        /*
-        if (params.beam_flag) {
-            if (params.beams > 0 && params.beams <= 8) {
-                flagGroup.child.push({
-                    new: 'text',
-                    class: 'Note-flag Global-musicFont',
-                    id: `${params.id}-flag`,
-                    x: stemX - (params.stem_direction == 'down' ? 0 : stemWidth),
-                    y: stemEndY,
-                    child: lib.smufl.flag[params.beams][(params.stem_direction == 'down' ? 'down' : 'up')]
-                });
-            }
-            else {
-                console.error(`${params.id}: ${params.beams} beams not supported`);
-            }
-        }
-        */
         returnArray.push(flagGroup);
 
         // dots
@@ -1694,6 +1696,249 @@ module.exports = {
 
 /***/ }),
 
+/***/ 742:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const Template = __webpack_require__(20);
+const lib = __webpack_require__(1);
+
+
+class Rest extends Template.SymbolBase 
+{
+    constructor() {
+        super();
+        this.class = 'Rest';
+        this.palette = ['Graphic'];
+    }
+
+
+    get structs () {
+        return {
+ 
+            data: {
+                class: this.class,
+                id : `${this.class}-0`,
+                value: 1
+            },
+            
+            view: {
+                class: this.class,
+                id: `${this.class}-0`, 
+                x: 100,
+                y: 100,
+                glyph: 'auto',
+                dots: 0,
+                dots_displace: true // default
+            },
+            
+            children: {
+                data: {},
+                view: {}
+            }
+        }
+    }
+
+    drag(element, pos){}
+
+    selected(element, state) {
+        ui_api.sendToServer({ 
+            key:"call", 
+            val: {
+                class: "NodeScoreAPI", 
+                method: "updateSelected",
+                id: element.id,
+                state: state
+            }
+        });
+    }
+
+    currentContext( element, enable = false ) 
+    {
+        console.log(this.class, " is context ", enable);
+        if( enable )
+        {
+            this.m_mode = 'context';
+        }
+        else
+        {
+            this.m_mode = "exited context";
+        }
+        ui_api.sendToServer({ 
+            key:"call", 
+            val: {
+                class: "NodeScoreAPI", 
+                method: "updateContext",
+                id: element.id,
+                enable
+            }
+        });
+    }
+    
+    display(params) {
+        const staffLineSpacing = lib.fontSize / 4;
+
+        //console.log('params', params);
+        ui_api.hasParam(params, Object.keys(this.structs.view) );
+        let returnArray = [];
+        let currentX = params.x;
+        
+        // rest glyph
+        returnArray.push({
+            new: 'text',
+            class: 'Rest-glyph Global-musicFont',
+            id: `${params.id}-glyph`,
+            x: currentX,
+            y: params.y,
+            child: params.glyph
+        });
+        currentX += lib.getComputedTextLength(params.glyph, 'Rest-glyph Global-musicFont');
+        
+        // dots
+        let dotGroup = {
+            new: 'g',
+            class: 'Rest-dot-group',
+            id: `${params.id}-dot-group`,
+            'data-num-dots': params.dots,
+            child: []
+        };
+        for (let i = 0; i < params.dots; i++) {
+            dotGroup.child.push({
+                new: 'text',
+                class: 'Rest-dot Global-musicFont',
+                id: `${params.id}-dot-${i}`,
+                x: currentX,
+                y: params.y - (params.dots_displace ? staffLineSpacing / 2 : 0),
+                child: lib.smufl.dot
+            });
+            currentX += lib.getComputedTextLength(lib.smufl.dot, 'Rest-dot Global-musicFont');
+        }
+        returnArray.push(dotGroup);
+        
+        return returnArray;
+    }
+    
+    getElementViewParams(element) {
+        const glyph = element.querySelector(`.Rest-glyph`).innerText;
+        const x = parseFloat(restHead.getAttribute('x'));
+        const y = parseFloat(restHead.getAttribute('y'));
+        const dots = parseInt(element.querySelector(`.Rest-dot-group`).dataset['num-dots']);
+
+        return {
+            id: element.id,
+            x,
+            y,
+            glyph,
+            dots
+        }
+    }
+
+    getPaletteIcon() {
+        return {
+            key: 'svg',
+            val: {
+                new: 'text',
+                id: `Rest-palette-icon`,
+                class: 'Rest-glyph Global-musicFont',
+                x: 20,
+                y: 20,
+                child: ''
+            }
+        }
+    }
+
+    childDataToViewParams(this_element, child_data) {
+        if (child_data.class == 'Graphic') {
+            const x = this.getElementViewParams(this_element).x;
+            const y = this.getElementViewParams(this_element).y - 50;
+            return {x, y}
+        }
+    }
+
+    childViewParamsToData(this_element, child_viewParams) {
+
+    }
+
+    // update parent when new rest is added
+    creatNewFromMouseEvent(event)
+    {
+        // remove preview sprite
+        ui_api.drawsocketInput({
+            key: "remove", 
+            val: `${this.class}-sprite`
+        })
+
+        // generate objectData from Mouse Event
+        const container = ui_api.getCurrentContext();
+        let data =  this.mouseToData(event, container);
+        
+        this.fromData(data, container);
+
+        // send new object to server
+        ui_api.sendToServer({
+            key: "data",
+            val: data
+        })
+
+        // call parent updateAfterContents function
+        const parentDef = ui_api.getDefForElement(container);
+        parentDef.updateAfterContents(container);
+
+        return data;
+    }
+
+    // update parent when rest is changed from inspector
+    updateFromDataset(element)
+    {
+        const container = ui_api.getContainerForElement(element);        
+        let data = ui_api.getElementData(element, container);
+     
+        //console.log(element.id, 'updateFromDataset', data);
+
+        this.fromData(data, container);
+
+        // update data 
+        ui_api.sendToServer({
+            key: "data",
+            val: data
+        })
+
+        let contents = element.querySelector('.contents');
+        let children = contents.children;
+        //console.log(element.id, 'contents', children);
+
+        for( let i = 0; i < children.length; i++)
+        {
+            const child_def = ui_api.getDefForElement(children[i]);
+            child_def.updateFromDataset(children[i]);
+        }
+        const parentDef = ui_api.getDefForElement(container);
+        parentDef.updateAfterContents(container);
+
+    }
+
+}
+
+class Rest_IO extends Template.IO_SymbolBase
+{
+    constructor()
+    {
+        super();
+        this.class = 'Rest';
+    }
+    
+}
+
+
+
+module.exports = {
+    ui_def: Rest,
+    io_def: Rest_IO    
+}
+
+
+
+/***/ }),
+
 /***/ 699:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -2003,7 +2248,7 @@ class StaffClef extends Template.SymbolBase
     constructor() {
         super();
         this.class = 'StaffClef';
-        this.palette = ['Note', 'RhythmGroup'];
+        this.palette = ['Note', 'Rest', 'RhythmGroup'];
         this.fontSize = 24;
     }
 
@@ -2223,13 +2468,18 @@ class StaffClef extends Template.SymbolBase
 
     childDataToViewParams(this_element, child_data) {
         let x, y;
+        const container = ui_api.getContainerForElement(this_element);
+        const children = this_element.querySelector('.contents').children;
+
+        const clefKeyGroup = this_element.querySelector('.StaffClef-clef_key-group');
+        const timeSigGroup = container.querySelector('.Measure-timeSig-group');
+
+        // NEED TO SIMPLIFY
+
         if (child_data.class == 'Note') {
             const clefKeyGroup = this_element.querySelector('.StaffClef-clef_key-group');
 
             // initialize x, start from the right of timeSig/clefKey if visible
-            const container = ui_api.getContainerForElement(this_element);
-            const timeSigGroup = container.querySelector('.Measure-timeSig-group');
-            const children = this_element.querySelector('.contents').children;
             if (children.length > 0 ) {
                 try { // check if this child already exists
                     const child_exist = document.getElementById(child_data.id);
@@ -2259,18 +2509,44 @@ class StaffClef extends Template.SymbolBase
                 //x_after_note
             }
         }
-        else if (child_data.class == 'RhythmGroup') {
+        else if (child_data.class == 'Rest') {
             const clefKeyGroup = this_element.querySelector('.StaffClef-clef_key-group');
-
+            const y = this.getElementViewParams(this_element).y;
             // initialize x, start from the right of timeSig/clefKey if visible
-            const container = ui_api.getContainerForElement(this_element);
-            const timeSigGroup = container.querySelector('.Measure-timeSig-group');
-            const children = this_element.querySelector('.contents').children;
-            let group_exist;
+            if (children.length > 0 ) {
+                try { // check if this child already exists
+                    const child_exist = document.getElementById(child_data.id);
+                    x = ui_api.getBBoxAdjusted(child_exist).left;
+                }
+                catch (e) {
+                    const lastChild = children[children.length-1];
+                    x = ui_api.getBBoxAdjusted(lastChild).right;
+                }
+            }
+            else if (timeSigGroup) {
+                x = ui_api.getBBoxAdjusted(timeSigGroup).right;
+            }
+            else if (clefKeyGroup.childNodes.length > 0) {
+                x = ui_api.getBBoxAdjusted(clefKeyGroup).right;
+            }
+            else {
+                x = this.getElementViewParams(this_element).x;
+            }
+            const keyMap = __webpack_require__(629)(`./${this_element.dataset.key_map}`);
+            const fromKeyMap = keyMap.restDataToViewParams(this_element, child_data, this.fontSize / 4);
+            
+            return {
+                ...fromKeyMap, // y, accidental_glyph, accidental_visible, stem_direction, ledger_line, note_head_glyph
+                x,
+                y
+            }
+        }
+        else if (child_data.class == 'RhythmGroup') {
+
             if (children.length > 0 ) {
                 try { // check if this rhythm group already exists
-                    group_exist = document.getElementById(child_data.id);
-                    x = ui_api.getBBoxAdjusted(group_exist).left;
+                    const child_exist = document.getElementById(child_data.id);
+                    x = ui_api.getBBoxAdjusted(child_exist).left;
                 }
                 catch (e) {
                     const lastChild = children[children.length-1];
@@ -2296,20 +2572,21 @@ class StaffClef extends Template.SymbolBase
     }
 
     childViewParamsToData(this_element, child_viewParams) {
-        const keyMap = __webpack_require__(629)(`./${this_element.dataset.key_map}`);
-        const yCenter = this.getElementViewParams(this_element).y;
-        const staffLevelSpacing = this.fontSize / 8;
-        const staffLevel = (yCenter - child_viewParams.y) / staffLevelSpacing;
-
-        const pitch = keyMap.staffLevelToPitch(this_element, staffLevel);
-        return { pitch }
+        if ('note_head_glyph' in child_viewParams) { // if child is a note
+            const keyMap = __webpack_require__(629)(`./${this_element.dataset.key_map}`);
+            const yCenter = this.getElementViewParams(this_element).y;
+            const staffLevelSpacing = this.fontSize / 8;
+            const staffLevel = (yCenter - child_viewParams.y) / staffLevelSpacing;
+            const pitch = keyMap.staffLevelToPitch(this_element, staffLevel);
+            return { pitch }
+        }
     }
 
     updateAfterContents (element) {
         const children = element.querySelector('.contents').children;
         const l = children.length;
         let drawArray = [];
-        let beamArray = [];
+        //let beamArray = [];
         let leftXArray = [];
         let rightXArray = [];
         let yArray = [];
@@ -2321,15 +2598,19 @@ class StaffClef extends Template.SymbolBase
             container: `${element.id}-display`,
             child: []
         };
+        let flagGroup = {
+            new: 'g',
+            class: 'StaffClef-flag-group',
+            id: `${element.id}-flag-group`,
+            container: `${element.id}-display`,
+            child: []
+        };
         const refY = parseFloat(element.querySelector('.StaffClef-ref').getAttribute('y'));
 
         // iterate children
         for (let i = 0; i < l; i++) {
             if (children[i].classList[0] == 'Note') {
                 isNote[i] = true;
-                // beam number array
-                const flagGroup = children[i].querySelector('.Note-flag-group');
-                beamArray[i] = parseFloat(flagGroup.dataset.num_beams);
                 // notehead y left right
                 const noteHead = children[i].querySelector('.Note-note_head');
                 const noteHeadBBox = ui_api.getBBoxAdjusted(noteHead);
@@ -2370,6 +2651,20 @@ class StaffClef extends Template.SymbolBase
                         height: staffHeight
                     });
                 }
+
+                // draw flags
+                const noteFlagGroup = children[i].querySelector('.Note-flag-group');
+                const numFlags = parseFloat(noteFlagGroup.dataset.num_beams);
+                if (numFlags > 0 && numFlags <= 8) {
+                    flagGroup.child.push({
+                        new: 'text',
+                        class: 'StaffClef-flag Global-musicFont',
+                        id: `${element.id}-flag-${children[i].id}`,
+                        x: (stem_direction == 'down' ? leftXArray[i] : rightXArray[i] - stemWidth),
+                        y: yArray[i] - (stem_direction == 'down' ? 0 : staffHeight),
+                        child: lib.smufl.flag[numFlags][stem_direction]
+                    });
+                }
             }
             else if (children[i].classList[0] == 'RhythmGroup') {
                 // do nothing if it's a RhythmGroup
@@ -2378,6 +2673,7 @@ class StaffClef extends Template.SymbolBase
         }
         
         drawArray.push(stemGroup);
+        drawArray.push(flagGroup);
 
         const drawObj = {
             key: 'svg',
@@ -2992,6 +3288,50 @@ function noteValueToGlyph(value) {
     }
 }
 
+function restValueToGlyph(value) {
+    const maxDots = 6;
+    let glyph = '';
+    let dots = 0;
+    let currentValue = 32;
+    if (value > 32 || value <= 0) {
+        console.log('Note value invalid:',value);
+    }
+    while (value < currentValue && currentValue >= 1/256) {
+        currentValue /= 2;
+        glyph = currentValue;
+    }
+    // add dots
+    let dotValue = currentValue;
+    while (value > currentValue && dots < maxDots) {
+        dotValue /= 2;
+        currentValue += dotValue;
+        dots++;
+    }
+
+    return {
+        glyph,
+        dots
+    }
+}
+
+/**
+ * Called by childDataToViewParams in StaffClef.js, returns note view params y, accidental
+ * 
+ * @param {Element} staff_element 
+ * @param {Object} rest_data 
+ */
+ function restDataToViewParams(staff_element, rest_data, staffLineSpacing) {
+
+    // rhythm
+    const value = rest_data.value;
+    const restDisplay = restValueToGlyph(value);
+    const glyph = lib.smufl.rest[restDisplay.glyph];
+    const dots = restDisplay.dots;
+    return {
+        glyph,
+        dots,
+    }
+}
 /**
  * Called by childDataToViewParams in StaffClef.js, returns note view params y, accidental
  * 
@@ -3119,6 +3459,7 @@ module.exports = {
     keySignatureDef,
     accidentalDef,
     noteDataToViewParams,
+    restDataToViewParams,
     staffLevelToPitch,
     keySignatureDisplay
 }
