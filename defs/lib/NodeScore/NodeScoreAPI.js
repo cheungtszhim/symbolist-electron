@@ -371,7 +371,7 @@ class NodeScoreAPI_IO
             id: 'Score',
             attribute: 'composer',
             msg: 'getComposer'
-        })
+        });
     }
 
     getCopyright() {
@@ -379,7 +379,7 @@ class NodeScoreAPI_IO
             id: 'Score',
             attribute: 'copyright',
             msg: 'getCopyright'
-        })
+        });
     }
 
     // set attributes
@@ -446,6 +446,20 @@ class NodeScoreAPI_IO
             io_api.addToModel(note);
             io_api.sendDataToUI(note);
         }
+    }
+
+    // converters
+
+    importJMSL(params) {
+        let path;
+        if (typeof params.args != 'undefined') {
+            const args = Array.isArray(params.args) ? params.args : [params.args];
+            path = args[0];
+        }
+        else if (typeof params.path != 'undefined') path = params.path;
+
+        const converter = require('./converters/importJMSL');
+        const scoreObj = converter.importJMSL(path);
     }
     
 }
