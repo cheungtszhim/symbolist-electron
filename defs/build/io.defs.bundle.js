@@ -2781,7 +2781,7 @@ function importJMSL(path) {
                     contents: [{
                         class: 'StaffClef',
                         id: `StaffClef_${i}_${j}`,
-                        
+                        contents: []
                     }]
                 }
                 p.contents.push(measureStaffObj);                
