@@ -239,34 +239,61 @@ class Measure extends Template.SymbolBase
     }
 
     childDataToViewParams(this_element, child_data) {
-        const x = this.getElementViewParams(this_element).x;
-        const y = this.getElementViewParams(this_element).y;
-        //window.max.outlet("post", child_data.id, 'x, y', x, y);
-        const staff_line_width = this.getElementViewParams(this_element).width;
-
-        let clef_visible = child_data.clef_visible;
-        let key_signature_visible = child_data.key_signature_visible;
-        if (this_element.dataset.index != 0) {
-            const prevMeasure = this.getPreviousMeasure(this_element);
-            const prevStaff = prevMeasure.querySelector('.StaffClef');
-            if (clef_visible == 'auto') {
-                clef_visible = !(prevStaff.dataset.clef == child_data.clef && prevStaff.dataset.clef_anchor == child_data.clef_anchor);
+        if (child_data.class == 'StaffClef') {
+            const x = this.getElementViewParams(this_element).x;
+            const y = this.getElementViewParams(this_element).y;
+            //window.max.outlet("post", child_data.id, 'x, y', x, y);
+            const staff_line_width = this.getElementViewParams(this_element).width;
+    
+            let clef_visible = child_data.clef_visible;
+            let key_signature_visible = child_data.key_signature_visible;
+            if (this_element.dataset.index != 0) {
+                const prevMeasure = this.getPreviousMeasure(this_element);
+                const prevStaff = prevMeasure.querySelector('.StaffClef');
+                if (clef_visible == 'auto') {
+                    clef_visible = !(prevStaff.dataset.clef == child_data.clef && prevStaff.dataset.clef_anchor == child_data.clef_anchor);
+                }
+                if (key_signature_visible == 'auto') {
+                    key_signature_visible = !(prevStaff.dataset.key_signature == child_data.key_signature && prevStaff.dataset.key_map == child_data.key_map);
+                }
             }
-            if (key_signature_visible == 'auto') {
-                key_signature_visible = !(prevStaff.dataset.key_signature == child_data.key_signature && prevStaff.dataset.key_map == child_data.key_map);
+            else {
+                if (clef_visible == 'auto') clef_visible = true;
+                if (key_signature_visible == 'auto') key_signature_visible = true;
             }
-        }
-        else {
-            if (clef_visible == 'auto') clef_visible = true;
-            if (key_signature_visible == 'auto') key_signature_visible = true;
-        }
+    
+            let key_map = child_data.key_map;
+            if (key_map == 'auto') {
+                if (child_data.clef == 'perc') key_map = 'perc';
+                else key_map = '24EDO';
+            }
+            const childKeyMap = require('./key_maps/'+key_map);
+            
+            // default behaviours for clefs
+            let clef = child_data.clef;
+            let clef_anchor = child_data.clef_anchor;
 
-        return {
-            x,
-            y,
-            staff_line_width,
-            clef_visible,
-            key_signature_visible
+            if (clef == 'auto') clef = 'G';
+            else if (clef in childKeyMap.clefAlternativeDef) {
+                clef_anchor = clefAlternativeDef[clef].clef_anchor;
+                clef = clefAlternativeDef[clef].clef;
+            }
+            
+            if (clef_anchor == 'auto') {
+                clef_anchor = childKeyMap.clefDef[clef].default_anchor;
+            }
+    
+            return {
+                x,
+                y,
+                staff_line_width,
+                key_map,
+                clef,
+                clef_anchor,
+                clef_visible,
+                key_signature_visible
+            }
+
         }
     }
     

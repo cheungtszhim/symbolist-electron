@@ -41,11 +41,11 @@ function importJMSL(path) {
             });
         }
 
-        const measure = score.measure;
+        const measure = Array.isArray(score.measure) ? score.measure : [score.measure];
 
         measure.forEach((m,i) => {
             const timesig = m.TIMESIG.split(' ');
-            const staff = m.staff;
+            const staff = Array.isArray(m.staff) ? m.staff : [m.staff];
             scoreObj.contents.forEach((p,j) => {
                 let measureStaffObj = {
                     // copy measure in all parts

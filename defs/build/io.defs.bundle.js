@@ -295,34 +295,61 @@ class Measure extends Template.SymbolBase
     }
 
     childDataToViewParams(this_element, child_data) {
-        const x = this.getElementViewParams(this_element).x;
-        const y = this.getElementViewParams(this_element).y;
-        //window.max.outlet("post", child_data.id, 'x, y', x, y);
-        const staff_line_width = this.getElementViewParams(this_element).width;
-
-        let clef_visible = child_data.clef_visible;
-        let key_signature_visible = child_data.key_signature_visible;
-        if (this_element.dataset.index != 0) {
-            const prevMeasure = this.getPreviousMeasure(this_element);
-            const prevStaff = prevMeasure.querySelector('.StaffClef');
-            if (clef_visible == 'auto') {
-                clef_visible = !(prevStaff.dataset.clef == child_data.clef && prevStaff.dataset.clef_anchor == child_data.clef_anchor);
+        if (child_data.class == 'StaffClef') {
+            const x = this.getElementViewParams(this_element).x;
+            const y = this.getElementViewParams(this_element).y;
+            //window.max.outlet("post", child_data.id, 'x, y', x, y);
+            const staff_line_width = this.getElementViewParams(this_element).width;
+    
+            let clef_visible = child_data.clef_visible;
+            let key_signature_visible = child_data.key_signature_visible;
+            if (this_element.dataset.index != 0) {
+                const prevMeasure = this.getPreviousMeasure(this_element);
+                const prevStaff = prevMeasure.querySelector('.StaffClef');
+                if (clef_visible == 'auto') {
+                    clef_visible = !(prevStaff.dataset.clef == child_data.clef && prevStaff.dataset.clef_anchor == child_data.clef_anchor);
+                }
+                if (key_signature_visible == 'auto') {
+                    key_signature_visible = !(prevStaff.dataset.key_signature == child_data.key_signature && prevStaff.dataset.key_map == child_data.key_map);
+                }
             }
-            if (key_signature_visible == 'auto') {
-                key_signature_visible = !(prevStaff.dataset.key_signature == child_data.key_signature && prevStaff.dataset.key_map == child_data.key_map);
+            else {
+                if (clef_visible == 'auto') clef_visible = true;
+                if (key_signature_visible == 'auto') key_signature_visible = true;
             }
-        }
-        else {
-            if (clef_visible == 'auto') clef_visible = true;
-            if (key_signature_visible == 'auto') key_signature_visible = true;
-        }
+    
+            let key_map = child_data.key_map;
+            if (key_map == 'auto') {
+                if (child_data.clef == 'perc') key_map = 'perc';
+                else key_map = '24EDO';
+            }
+            const childKeyMap = __webpack_require__(629)("./"+key_map);
+            
+            // default behaviours for clefs
+            let clef = child_data.clef;
+            let clef_anchor = child_data.clef_anchor;
 
-        return {
-            x,
-            y,
-            staff_line_width,
-            clef_visible,
-            key_signature_visible
+            if (clef == 'auto') clef = 'G';
+            else if (clef in childKeyMap.clefAlternativeDef) {
+                clef_anchor = clefAlternativeDef[clef].clef_anchor;
+                clef = clefAlternativeDef[clef].clef;
+            }
+            
+            if (clef_anchor == 'auto') {
+                clef_anchor = childKeyMap.clefDef[clef].default_anchor;
+            }
+    
+            return {
+                x,
+                y,
+                staff_line_width,
+                key_map,
+                clef,
+                clef_anchor,
+                clef_visible,
+                key_signature_visible
+            }
+
         }
     }
     
@@ -2275,9 +2302,9 @@ class StaffClef extends Template.SymbolBase
                 id : `${this.class}-0`,
                 staff_line : [-2, -1, 0, 1, 2],
                 clef: 'G',
-                clef_anchor: -1,
+                clef_anchor: 'auto',
                 clef_visible: 'auto',
-                key_map: '24EDO',
+                key_map: 'auto',
                 key_signature: 'none',
                 key_signature_visible: 'auto'
             },
@@ -2292,7 +2319,7 @@ class StaffClef extends Template.SymbolBase
                 clef: 'G',
                 clef_anchor: -1,
                 clef_visible: 'auto',
-                key_map: '24EDO',
+                key_map: 'auto',
                 key_signature: 'none',
                 key_signature_visible: 'auto'
             },
@@ -2765,11 +2792,11 @@ function importJMSL(path) {
             });
         }
 
-        const measure = score.measure;
+        const measure = Array.isArray(score.measure) ? score.measure : [score.measure];
 
         measure.forEach((m,i) => {
             const timesig = m.TIMESIG.split(' ');
-            const staff = m.staff;
+            const staff = Array.isArray(m.staff) ? m.staff : [m.staff];
             scoreObj.contents.forEach((p,j) => {
                 let measureStaffObj = {
                     // copy measure in all parts
@@ -2943,6 +2970,7 @@ const clefDef = {
     G: {
         pitch: 67,
         glyph: lib.smufl.clef.G,
+        default_anchor: -1,
         key_signature_centroid: {
             '1': 4,
             '-1': 2
@@ -2951,6 +2979,7 @@ const clefDef = {
     C: {
         pitch: 60,
         glyph: lib.smufl.clef.C,
+        default_anchor: 0,
         key_signature_centroid: {
             '1': 1,
             '-1': -1
@@ -2959,6 +2988,7 @@ const clefDef = {
     F: {
         pitch: 53,
         glyph: lib.smufl.clef.F,
+        default_anchor: 1,
         key_signature_centroid: {
             '1': -2,
             '-1': -4
@@ -2967,6 +2997,7 @@ const clefDef = {
     'G-8': {
         pitch: 55,
         glyph: lib.smufl.clef['G-8'],
+        default_anchor: -1,
         key_signature_centroid: {
             '1': 4,
             '-1': 2
@@ -2975,6 +3006,7 @@ const clefDef = {
     'G+8': {
         pitch: 79,
         glyph: lib.smufl.clef['G+8'],
+        default_anchor: -1,
         key_signature_centroid: {
             '1': 4,
             '-1': 2
@@ -2983,6 +3015,7 @@ const clefDef = {
     'G-15': {
         pitch: 43,
         glyph: lib.smufl.clef['G-15'],
+        default_anchor: -1,
         key_signature_centroid: {
             '1': 4,
             '-1': 2
@@ -2991,6 +3024,7 @@ const clefDef = {
     'G+15': {
         pitch: 91,
         glyph: lib.smufl.clef['G+15'],
+        default_anchor: -1,
         key_signature_centroid: {
             '1': 4,
             '-1': 2
@@ -2999,6 +3033,7 @@ const clefDef = {
     'C-8': {
         pitch: 48,
         glyph: lib.smufl.clef['C-8'],
+        default_anchor: 0,
         key_signature_centroid: {
             '1': 1,
             '-1': -1
@@ -3007,6 +3042,7 @@ const clefDef = {
     'F-8': {
         pitch: 55,
         glyph: lib.smufl.clef['F-8'],
+        default_anchor: 1,
         key_signature_centroid: {
             '1': -2,
             '-1': -4
@@ -3015,6 +3051,7 @@ const clefDef = {
     'F+8': {
         pitch: 79,
         glyph: lib.smufl.clef['F+8'],
+        default_anchor: 1,
         key_signature_centroid: {
             '1': -2,
             '-1': -4
@@ -3023,6 +3060,7 @@ const clefDef = {
     'F-15': {
         pitch: 43,
         glyph: lib.smufl.clef['F-15'],
+        default_anchor: 1,
         key_signature_centroid: {
             '1': -2,
             '-1': -4
@@ -3031,10 +3069,34 @@ const clefDef = {
     'F+15': {
         pitch: 91,
         glyph: lib.smufl.clef['F+15'],
+        default_anchor: 1,
         key_signature_centroid: {
             '1': -2,
             '-1': -4
         }
+    }
+}
+
+const clefAlternativeDef = {
+    treble: {
+        clef: 'G',
+        clef_anchor: -1
+    },
+    soprano: {
+        clef: 'G',
+        clef_anchor: -2
+    },
+    alto: {
+        clef: 'C',
+        clef_anchor: 0
+    },
+    tenor: {
+        clef: 'C',
+        clef_anchor: 1
+    },
+    bass: {
+        clef: 'F',
+        clef_anchor: 1
     }
 }
 
@@ -3674,6 +3736,7 @@ function restValueToGlyph(value) {
 module.exports = {
     pitchClassDef,
     clefDef,
+    clefAlternativeDef,
     keySignatureDef,
     accidentalDef,
     noteDataToViewParams,

@@ -20,9 +20,9 @@ class StaffClef extends Template.SymbolBase
                 id : `${this.class}-0`,
                 staff_line : [-2, -1, 0, 1, 2],
                 clef: 'G',
-                clef_anchor: -1,
+                clef_anchor: 'auto',
                 clef_visible: 'auto',
-                key_map: '24EDO',
+                key_map: 'auto',
                 key_signature: 'none',
                 key_signature_visible: 'auto'
             },
@@ -37,7 +37,7 @@ class StaffClef extends Template.SymbolBase
                 clef: 'G',
                 clef_anchor: -1,
                 clef_visible: 'auto',
-                key_map: '24EDO',
+                key_map: 'auto',
                 key_signature: 'none',
                 key_signature_visible: 'auto'
             },

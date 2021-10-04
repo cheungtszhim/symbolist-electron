@@ -15,6 +15,7 @@ const clefDef = {
     G: {
         pitch: 67,
         glyph: lib.smufl.clef.G,
+        default_anchor: -1,
         key_signature_centroid: {
             '1': 4,
             '-1': 2
@@ -23,6 +24,7 @@ const clefDef = {
     C: {
         pitch: 60,
         glyph: lib.smufl.clef.C,
+        default_anchor: 0,
         key_signature_centroid: {
             '1': 1,
             '-1': -1
@@ -31,6 +33,7 @@ const clefDef = {
     F: {
         pitch: 53,
         glyph: lib.smufl.clef.F,
+        default_anchor: 1,
         key_signature_centroid: {
             '1': -2,
             '-1': -4
@@ -39,6 +42,7 @@ const clefDef = {
     'G-8': {
         pitch: 55,
         glyph: lib.smufl.clef['G-8'],
+        default_anchor: -1,
         key_signature_centroid: {
             '1': 4,
             '-1': 2
@@ -47,6 +51,7 @@ const clefDef = {
     'G+8': {
         pitch: 79,
         glyph: lib.smufl.clef['G+8'],
+        default_anchor: -1,
         key_signature_centroid: {
             '1': 4,
             '-1': 2
@@ -55,6 +60,7 @@ const clefDef = {
     'G-15': {
         pitch: 43,
         glyph: lib.smufl.clef['G-15'],
+        default_anchor: -1,
         key_signature_centroid: {
             '1': 4,
             '-1': 2
@@ -63,6 +69,7 @@ const clefDef = {
     'G+15': {
         pitch: 91,
         glyph: lib.smufl.clef['G+15'],
+        default_anchor: -1,
         key_signature_centroid: {
             '1': 4,
             '-1': 2
@@ -71,6 +78,7 @@ const clefDef = {
     'C-8': {
         pitch: 48,
         glyph: lib.smufl.clef['C-8'],
+        default_anchor: 0,
         key_signature_centroid: {
             '1': 1,
             '-1': -1
@@ -79,6 +87,7 @@ const clefDef = {
     'F-8': {
         pitch: 55,
         glyph: lib.smufl.clef['F-8'],
+        default_anchor: 1,
         key_signature_centroid: {
             '1': -2,
             '-1': -4
@@ -87,6 +96,7 @@ const clefDef = {
     'F+8': {
         pitch: 79,
         glyph: lib.smufl.clef['F+8'],
+        default_anchor: 1,
         key_signature_centroid: {
             '1': -2,
             '-1': -4
@@ -95,6 +105,7 @@ const clefDef = {
     'F-15': {
         pitch: 43,
         glyph: lib.smufl.clef['F-15'],
+        default_anchor: 1,
         key_signature_centroid: {
             '1': -2,
             '-1': -4
@@ -103,10 +114,34 @@ const clefDef = {
     'F+15': {
         pitch: 91,
         glyph: lib.smufl.clef['F+15'],
+        default_anchor: 1,
         key_signature_centroid: {
             '1': -2,
             '-1': -4
         }
+    }
+}
+
+const clefAlternativeDef = {
+    treble: {
+        clef: 'G',
+        clef_anchor: -1
+    },
+    soprano: {
+        clef: 'G',
+        clef_anchor: -2
+    },
+    alto: {
+        clef: 'C',
+        clef_anchor: 0
+    },
+    tenor: {
+        clef: 'C',
+        clef_anchor: 1
+    },
+    bass: {
+        clef: 'F',
+        clef_anchor: 1
     }
 }
 
@@ -746,6 +781,7 @@ function restValueToGlyph(value) {
 module.exports = {
     pitchClassDef,
     clefDef,
+    clefAlternativeDef,
     keySignatureDef,
     accidentalDef,
     noteDataToViewParams,
